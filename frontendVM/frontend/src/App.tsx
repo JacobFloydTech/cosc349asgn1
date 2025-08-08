@@ -1,24 +1,52 @@
-import { useEffect, useState } from "react"
+import {  StrictMode, useContext, useEffect, useState } from "react"
+import Homepage from "./Homepage";
+import { LoginContext } from "./context";
 
-export default function App() { 
+
+export default function BaseApplication() { 
   const [login, setLogin] = useState<string | null>(null);
+
   useEffect(() => { 
     const login = localStorage.getItem("login") || "";
     setLogin(login)
   },[])
+
+
+  return ( 
+    <StrictMode>
+      <LoginContext.Provider value={{login, setLogin}}>
+        <App/>
+      </LoginContext.Provider>
+
+    </StrictMode>
+  )
+}
+function App() { 
+  const {login} = useContext(LoginContext);
   return ( 
     <div className="h-full absolute top-0 left-0 w-full flex  justify-center items-center ">
       {login == null && <h1>Loading.....</h1>}
-      {login == "" && <LoginForm login={login}/>}
+      {login == "" && <LoginForm />}
+      {login != null && login != "" && <Homepage/>}
     </div>
   )
 }
 
-const LoginForm = ({login}: {login: string | null}) => { 
+const LoginForm = () => { 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const {setLogin} = useContext(LoginContext);
   const loginRequest =  async () => { 
-    
+    if (!username || !password) return 
+
+    const request = await fetch("http://localhost:3000/signIn", { 
+      method: "POST", headers: { "Content-Type": 'application/json'},
+      body: JSON.stringify({username, password})
+    })
+    if (request.status == 202) {
+      localStorage.setItem("login", username)
+      setLogin(username)
+    }
   }
   return ( 
     <div className="border-white border-2 flex flex-col items-center justify-center h-1/3 -translate-y-1/3 p-4 text-2xl rounded-xl">

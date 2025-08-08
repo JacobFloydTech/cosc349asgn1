@@ -85,6 +85,6 @@ Vagrant.configure("2") do |config|
     # Install frontend deps
     cd /vagrant/
     npm install
-    node index.js
+    node --watch index.js
   SHELL
 end

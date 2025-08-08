@@ -86,11 +86,15 @@ Vagrant.configure("2") do |config|
       FLUSH PRIVILEGES;
       CREATE DATABASE COSC349;
       USE COSC349;
-      CREATE TABLE websites (
-        id varchar(255),
+      CREATE TABLE User (username varchar(255) unique primary key, password varchar(255));
+      CREATE TABLE Website (
+        link varchar(255) primary key,
         name varchar(255),
-        summary text
+        summary text,
+        uploader varchar(255),
+        FOREIGN KEY (uploader) REFERENCES User(username)
       );
+
 EOF
 SHELL
 end
