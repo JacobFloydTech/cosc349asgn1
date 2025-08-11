@@ -12,7 +12,7 @@ export default function Homepage() {
 }
 
 function Sidebar() { 
-    const {login} = useContext(LoginContext);
+    const {login, setLogin} = useContext(LoginContext);
     const [websites, setWebsites] = useState<Website[]>([]);
     const getWebsites = async () => { 
         if (!login) return
@@ -22,19 +22,31 @@ function Sidebar() {
         const {results} = await request.json()
         setWebsites(results)
     }
+    const logout = () => { 
+        localStorage.removeItem("token");
+        setLogin("")
+    }
     useEffect(() => { 
         getWebsites();
     },[])
     return ( 
-        <div className="border-2 border-white">
-            {websites.map(e => { 
-                return ( 
-                    <div>
-                        <p>{e.name}</p>
-                        <p className="text-sm text-gray-500">{e.link}</p>
-                    </div>
-                )
-            })}
+        <div className="border-2 flex flex-col justify-between text-white border-white">
+            <div>
+                {websites.map(e => { 
+                    return ( 
+                        <div>
+                            <p>{e.name}</p>
+                            <p className="text-sm text-gray-500">{e.link}</p>
+                        </div>
+                    )
+                })}
+            </div>
+            <div className="flex justify-around items-center">
+                <p className="border-2">Logged in as: {login}</p>
+                <button onClick={logout} className="h-32 w-32 cursor-pointer">
+                    <LogoutSVG/>
+                </button>
+            </div>
         </div>
     )
 }
@@ -78,5 +90,12 @@ function Link({website}: { website: Website}) {
         <div>
             {website.name}
         </div>
+    )
+}
+
+//Source: https://www.svgrepo.com/svg/425436/logout, License: https://www.svgrepo.com/page/licensing/
+function LogoutSVG () { 
+    return ( 
+        <svg fill="#000000" className="w-full h-full" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"  viewBox="0 -50 500 500" enable-background="new 0 0 500 500"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g  stroke="white" fill="white" id="SVGRepo_iconCarrier"> <g> <path  d="M250,224c-4.4,0-8,3.6-8,8v24c0,4.4-3.6,8-8,8h-40c-4.4,0-8-3.6-8-8V144c0-4.4,3.6-8,8-8h40c4.4,0,8,3.6,8,8v24 c0,4.4,3.6,8,8,8s8-3.6,8-8v-24c0-13.2-10.8-24-24-24h-40c-13.2,0-24,10.8-24,24v112c0,13.2,10.8,24,24,24h40c13.2,0,24-10.8,24-24 v-24C258,227.6,254.4,224,250,224z"></path> <path d="M328.4,204.8c0.1-0.1,0.2-0.2,0.3-0.3c0,0,0,0,0-0.1c0.1-0.2,0.2-0.4,0.3-0.6c0.1-0.3,0.3-0.5,0.4-0.8 c0.1-0.3,0.2-0.5,0.3-0.8c0.1-0.2,0.2-0.4,0.2-0.7c0.2-1,0.2-2.1,0-3.1c0,0,0,0,0,0c0-0.2-0.1-0.4-0.2-0.7 c-0.1-0.3-0.1-0.5-0.2-0.8c0,0,0,0,0,0c-0.1-0.3-0.3-0.5-0.4-0.8c-0.1-0.2-0.2-0.4-0.3-0.6c-0.3-0.4-0.6-0.9-1-1.2l-32-32 c-3.1-3.1-8.2-3.1-11.3,0c-3.1,3.1-3.1,8.2,0,11.3l18.3,18.3H210c-4.4,0-8,3.6-8,8s3.6,8,8,8h92.7l-18.3,18.3 c-3.1,3.1-3.1,8.2,0,11.3c1.6,1.6,3.6,2.3,5.7,2.3s4.1-0.8,5.7-2.3l32-32c0,0,0,0,0,0C327.9,205.4,328.1,205.1,328.4,204.8z"></path> </g> </g></svg>
     )
 }

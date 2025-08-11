@@ -6,11 +6,6 @@ import { LoginContext } from "./context";
 export default function BaseApplication() { 
   const [login, setLogin] = useState<string | null>(null);
 
-  useEffect(() => { 
-    const login = localStorage.getItem("login") || "";
-    setLogin(login)
-  },[])
-
 
   return ( 
     <StrictMode>
@@ -22,7 +17,23 @@ export default function BaseApplication() {
   )
 }
 function App() { 
-  const {login} = useContext(LoginContext);
+  const {login, setLogin} = useContext(LoginContext);
+  const getAuth = async (token: string) => { 
+    const request = await fetch("http://localhost:3000/decodeJWT", { 
+      method: "POST", body: JSON.stringify({token}), headers: { 'Content-Type': 'application/json'}
+    })
+    const {username} = await request.json();
+    setLogin(username);
+  }
+  useEffect(() => { 
+    const token = localStorage.getItem("token");
+    if (token) { 
+      getAuth(token)
+    } else { 
+      setLogin("");
+    }
+  },[])
+
   return ( 
     <div className="h-full absolute top-0 left-0 w-full flex  justify-center items-center ">
       {login == null && <h1>Loading.....</h1>}
