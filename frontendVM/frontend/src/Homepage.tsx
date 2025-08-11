@@ -58,13 +58,25 @@ function Search() {
     }
 
     return ( 
-        <div className="border-2 border-white">
-            <input className="outline-white text-4xl text-gray-100 border-2" onChange={(e) => setQuery(e.target.value)} value={query} placeholder="Search here"/>
-            {searchResults.map(e => { 
-                return ( 
-                    <div>{e.name}</div>
-                )
-            })}
+        <div className="border-2 w-full h-full flex-col flex items-center relative border-white">
+            <div className="flex flex-col w-1/3 h-2/3 mt-10 border-2 border-red-300 ">
+                <input className="outline-white h-14 p-2 rounded-md text-4xl text-white border-2" onChange={(e) => setQuery(e.target.value)} value={query} placeholder="Search here"/>
+                <div>
+                    {searchResults.map(e => { 
+                        return ( 
+                            <Link website={e}/>
+                        )
+                    })}
+                </div>
+            </div>
+        </div>
+    )
+}
+
+function Link({website}: { website: Website}) { 
+    return ( 
+        <div>
+            {website.name}
         </div>
     )
 }

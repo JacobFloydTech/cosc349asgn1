@@ -44,7 +44,8 @@ const LoginForm = () => {
       body: JSON.stringify({username, password})
     })
     if (request.status == 202) {
-      localStorage.setItem("login", username)
+      const {token} = await request.json();
+      localStorage.setItem('token', token)
       setLogin(username)
     }
   }
