@@ -14,6 +14,7 @@ export default function Homepage() {
 function Sidebar() { 
     const {login, setLogin} = useContext(LoginContext);
     const [websites, setWebsites] = useState<Website[]>([]);
+    const [add, setAdd] = useState<boolean>(true);
     const getWebsites = async () => { 
         if (!login) return
         const request = await fetch("http://localhost:3000/getUserWebsites", { 
@@ -28,10 +29,21 @@ function Sidebar() {
     }
     useEffect(() => { 
         getWebsites();
+        document.addEventListener("keydown", ({code}) => { 
+            if (code == "Escape") { 
+                setAdd(false)
+            }
+        })  
     },[])
     return ( 
         <div className="border-2 flex flex-col justify-between text-white border-white">
             <div>
+                <div className="flex justify-around items-center">
+                    <p className="text-xl">Logged in as: {login}</p>
+                    <button onClick={logout} className="h-32 w-32 cursor-pointer">
+                        <LogoutSVG/>
+                    </button>
+                </div>
                 {websites.map(e => { 
                     return ( 
                         <div>
@@ -40,12 +52,34 @@ function Sidebar() {
                         </div>
                     )
                 })}
+
             </div>
-            <div className="flex justify-around items-center">
-                <p className="border-2">Logged in as: {login}</p>
-                <button onClick={logout} className="h-32 w-32 cursor-pointer">
-                    <LogoutSVG/>
-                </button>
+            <button onClick={() => setAdd(true)} className="flex p-4 border-2 cursor-pointer justify-center">
+                <AddSVG/>
+                {add && <AddWebsite/>} 
+            </button>
+        </div>
+    )
+}
+
+function AddWebsite() {
+    const [link, setLink] = useState("");
+    const uploadWebsite = async () => { 
+        const token = localStorage.getItem("token");
+        if (link == "" || !token) return
+        const request = await fetch("http://localhost:3000/generateWebsiteSummary", { 
+            method: "POST",
+            body: JSON.stringify({link, token}),
+            headers: { 'Content-Type': 'application/json'}
+        })
+        console.log(request.status);
+    }
+    return ( 
+        <div className="absolute flex justify-center items-center cursor-auto z-50 w-full h-full top-0 left-0 bg-transparent backdrop-blur-md">
+            <div className="bg-gray-400 flex space-y-2 p-12 border-2 text-xl border-white rounded-xl flex-col text-white">
+                <h1>Enter the link to upload</h1>
+                <input className="outline-none border-b-black border-b-2" value={link} onChange={(e) => setLink(e.target.value)} type="text"/>
+                <button className="mt-4 cursor-pointer border-2 border-black bg-blue-500 p-4 rounded-xl" onClick={uploadWebsite}>Generate Entry</button>
             </div>
         </div>
     )
@@ -92,6 +126,17 @@ function Link({website}: { website: Website}) {
         </div>
     )
 }
+
+function AddSVG() { 
+    return ( 
+        <svg width="75" height="75" viewBox="0 0 200 200" >
+            <line stroke="black" stroke-width="20" stroke-linecap="round" x1="100" x2="100" y1="25" y2="175" />
+            <line stroke="black" stroke-width="20" stroke-linecap="round" x1="25" x2="175" y1="100" y2="100"/>
+        </svg>
+    )
+}
+
+
 
 //Source: https://www.svgrepo.com/svg/425436/logout, License: https://www.svgrepo.com/page/licensing/
 function LogoutSVG () { 

@@ -72,26 +72,30 @@ app.get('/query', async (req, res) => {
 
 app.post('/generateWebsiteSummary', async (req, res) => { 
     const {link, token} = req.body;
-    const {username} = jwt.decode(token, JWT_SECRET);
+    const data = jwt.decode(token, JWT_SECRET);
+    const username = data.user.username;
     if (!link || !username) return res.status(403).send();
     try { 
         const browser = await puppeteer.launch({headless: 'new'})
         const page = await browser.newPage();
         await page.goto(link);
+        const title = await page.title();
         const data = await page.evaluate(() => { 
             return document.body.innerText;
         })
         const summary = await generateAISummary(data);
         const faviconLink = await page.evaluate(() => { 
             const iconLink = document.querySelector("link[rel~='icon']");
-            return iconLink ? iconLink.href : '/favicon.ico'; 
+            const link = iconLink ? iconLink.href : '/favicon.ico'; 
+            return String(link);
         })
         await connection.query(
             'INSERT INTO Website (link, name, summary, uploader, favicon) VALUES (?,?,?,?,?)',
-            [link, page.title, summary, username, faviconLink]
+            [link, title, summary, username, faviconLink]
         )
         return res.status(202).send()
     } catch (e) { 
+        console.log(e);
         return res.status(500).send()
     }
 })
