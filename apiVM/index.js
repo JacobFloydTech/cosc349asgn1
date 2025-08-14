@@ -15,11 +15,11 @@ const JWT_SECRET = process.env['JWT_SECRET'];
 
 
 const connection = await mysql.createConnection({
-    host: "localhost",
+    host: "10.10.10.10",
     database: "COSC349",
-    user: process.env['SQL_USERNAME'],
-    password: process.env['SQL_PASSWORD'],
-    port: 3305 
+    user: "root",
+    password: "rootpassword",
+    port: 3306 
 })
 
 

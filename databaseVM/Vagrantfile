@@ -23,7 +23,7 @@ Vagrant.configure("2") do |config|
   # within the machine from a port on the host machine. In the example below,
   # accessing "localhost:8080" will access port 80 on the guest machine.
   # NOTE: This will enable public access to the opened port
-  config.vm.network "forwarded_port", guest: 3306, host: 3305
+  #config.vm.network "forwarded_port", guest: 3306, host: 3306
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine and only allow access
@@ -32,7 +32,7 @@ Vagrant.configure("2") do |config|
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
-  # config.vm.network "private_network", ip: "192.168.33.10"
+   config.vm.network "private_network", ip: "10.10.10.10"
 
   # Create a public network, which generally matched to bridged network.
   # Bridged networks make the machine appear as another physical device on
@@ -50,7 +50,7 @@ Vagrant.configure("2") do |config|
   # by making sure your Vagrantfile isn't accessible to the vagrant box.
   # If you use this you may want to enable additional shared subfolders as
   # shown above.
-  # config.vm.synced_folder ".", "/vagrant", disabled: true
+  config.vm.synced_folder ".", "/vagrant"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -71,31 +71,39 @@ Vagrant.configure("2") do |config|
   # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
-    apt-get update
-    sudo apt-get install -y mysql-server
-    sudo sed -i "s/^bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
-    sudo systemctl restart mysql
+    apt-get update -y
+    apt-get install -y mysql-server
 
-    # Change root auth from 'auth_socket' to 'mysql_native_password'
-    sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'rootpassword'; FLUSH PRIVILEGES;"
+    # Make MySQL listen on all interfaces
+    sed -i "s/^bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
+    systemctl restart mysql
 
-    # Create remote root user
-    sudo mysql -uroot -prootpassword <<EOF
-      CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY 'rootpassword'; 
-      GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION;
-      FLUSH PRIVILEGES;
-      CREATE DATABASE COSC349;
+
+    mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'rootpassword'; FLUSH PRIVILEGES;"
+    mysql -uroot -prootpassword -e "CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'rootpassword'; \
+                                    GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION; \
+                                    FLUSH PRIVILEGES;"
+
+
+    mysql -uroot -prootpassword <<EOF
+      CREATE DATABASE IF NOT EXISTS COSC349;
       USE COSC349;
-      CREATE TABLE User (username varchar(255) unique primary key, password varchar(255));
-      CREATE TABLE Website (
-        link varchar(255) primary key,
-        name varchar(255),
-        summary text,
-        uploader varchar(255),
+      CREATE TABLE IF NOT EXISTS User (
+        username VARCHAR(255) UNIQUE PRIMARY KEY,
+        password VARCHAR(255)
+      );
+      CREATE TABLE IF NOT EXISTS Website (
+        link VARCHAR(255) PRIMARY KEY,
+        name VARCHAR(255),
+        summary TEXT,
+        uploader VARCHAR(255),
         FOREIGN KEY (uploader) REFERENCES User(username)
       );
-
 EOF
-SHELL
-end
 
+    if command -v ufw >/dev/null && ufw status | grep -q active; then
+      ufw allow 3306/tcp
+    fi
+
+  SHELL
+end

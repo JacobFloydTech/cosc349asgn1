@@ -19,7 +19,7 @@ export default function BaseApplication() {
 function App() { 
   const {login, setLogin} = useContext(LoginContext);
   const getAuth = async (token: string) => { 
-    const request = await fetch("http://localhost:3000/decodeJWT", { 
+    const request = await fetch(`http://${import.meta.env.VITE_API_VM_IP}:3000/decodeJWT`, { 
       method: "POST", body: JSON.stringify({token}), headers: { 'Content-Type': 'application/json'}
     })
     const {username} = await request.json();
@@ -50,7 +50,7 @@ const LoginForm = () => {
   const loginRequest =  async () => { 
     if (!username || !password) return 
 
-    const request = await fetch("http://localhost:3000/signIn", { 
+    const request = await fetch(`http://${import.meta.env.VITE_API_VM_IP}:3000/signIn`, { 
       method: "POST", headers: { "Content-Type": 'application/json'},
       body: JSON.stringify({username, password})
     })

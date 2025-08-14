@@ -17,7 +17,7 @@ function Sidebar() {
     const [add, setAdd] = useState<boolean>(true);
     const getWebsites = async () => { 
         if (!login) return
-        const request = await fetch("http://localhost:3000/getUserWebsites", { 
+        const request = await fetch(`http://${import.meta.env.VITE_API_VM_KEY}:3000/getUserWebsites`, { 
             headers: { username: login}
         })
         const {results} = await request.json()
@@ -67,7 +67,7 @@ function AddWebsite() {
     const uploadWebsite = async () => { 
         const token = localStorage.getItem("token");
         if (link == "" || !token) return
-        const request = await fetch("http://localhost:3000/generateWebsiteSummary", { 
+        const request = await fetch(`http://${import.meta.env.VITE_API_VM_IP}:3000/generateWebsiteSummary`, { 
             method: "POST",
             body: JSON.stringify({link, token}),
             headers: { 'Content-Type': 'application/json'}
@@ -97,7 +97,7 @@ function Search() {
         
     },[setQuery, query])
     const searchDatabase =async () => { 
-        const request = await fetch("http://localhost:3000/query", { headers: { query}})
+        const request = await fetch(`http://${import.meta.env.VITE_API_VM_IP}:3000/query`, { headers: { query}})
         const {results} = await request.json();
 
         setSearchResults(results)
