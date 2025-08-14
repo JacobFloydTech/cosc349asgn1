@@ -43,6 +43,23 @@ app.post('/signIn', async (req, res) => {
     }
 })
 
+app.post('/signUp', async (req, res) => { 
+    const {username, password} = req.body;
+    if (!username || !password) return res.status(500).send()
+    try { 
+        await connection.query(
+            'INSERT INTO User VALUES (?,?)',
+            [username, password]
+        )
+        const user = {username, password}
+        const token = jwt.sign({user}, JWT_SECRET, { expiresIn: '7d'})
+        return res.status(202).json({token})
+    } catch (e) { 
+        console.error(e)
+        return res.status(500).send(JSON.stringify(e));
+    }
+})
+
 app.post('/decodeJWT', async (req, res) => { 
     const {token} = req.body;
     const data = jwt.decode(token, JWT_SECRET);
