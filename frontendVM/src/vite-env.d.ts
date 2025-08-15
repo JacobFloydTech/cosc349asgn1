@@ -5,5 +5,5 @@ export type Website = {
     name: string 
     summary: string
     uploader: string
-    
+    favicon: string
 }

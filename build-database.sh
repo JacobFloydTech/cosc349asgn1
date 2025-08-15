@@ -17,5 +17,6 @@ mysql -uroot -prootpassword -e "CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED 
                                   name VARCHAR(255),
                                   summary TEXT,
                                   uploader VARCHAR(255),
+                                  favicon VARCHAR(255),
                                   FOREIGN KEY (uploader) REFERENCES User(username)
                                 );"

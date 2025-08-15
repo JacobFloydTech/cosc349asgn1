@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react"
-import { LoginContext } from "./context"
+import { LoginContext, PopupContext } from "./context"
 import type { Website } from "./vite-env";
 
 export default function Homepage() { 
     return ( 
-        <div className="relative h-full grid grid-cols-[20%_80%]  w-full">
+        <div className="relative h-full  grid grid-cols-[20%_80%]  w-full">
             <Sidebar/>
             <Search/>
         </div>
@@ -13,15 +13,17 @@ export default function Homepage() {
 
 function Sidebar() { 
     const {login, setLogin} = useContext(LoginContext);
+    const { setWebsite: setPopup} = useContext(PopupContext);
     const [websites, setWebsites] = useState<Website[]>([]);
-    const [add, setAdd] = useState<boolean>(true);
+    const [add, setAdd] = useState<boolean>(false);
     const getWebsites = async () => { 
         if (!login) return
-        const request = await fetch(`http://${import.meta.env.VITE_API_VM_KEY}:3000/getUserWebsites`, { 
+        const request = await fetch(`http://${import.meta.env.VITE_API_VM_IP}:3000/getUserWebsites`, { 
             headers: { username: login}
         })
         const {results} = await request.json()
         setWebsites(results)
+
     }
     const logout = () => { 
         localStorage.removeItem("token");
@@ -36,7 +38,7 @@ function Sidebar() {
         })  
     },[])
     return ( 
-        <div className="border-2 flex flex-col justify-between text-white border-white">
+        <div className="flex flex-col justify-between text-white ">
             <div>
                 <div className="flex justify-around items-center">
                     <p className="text-xl">Logged in as: {login}</p>
@@ -46,40 +48,50 @@ function Sidebar() {
                 </div>
                 {websites.map(e => { 
                     return ( 
-                        <div>
+                        <button onClick={() => setPopup(e)} className="px-4">
                             <p>{e.name}</p>
                             <p className="text-sm text-gray-500">{e.link}</p>
-                        </div>
+                        </button>
                     )
                 })}
 
             </div>
-            <button onClick={() => setAdd(true)} className="flex p-4 border-2 cursor-pointer justify-center">
+            <div onClick={() => setAdd(true)} className="flex p-4  cursor-pointer justify-center">
                 <AddSVG/>
-                {add && <AddWebsite/>} 
-            </button>
+                {add && <AddWebsite setAdd={setAdd}/>} 
+            </div>
         </div>
     )
 }
 
-function AddWebsite() {
+function AddWebsite({setAdd}: {setAdd: React.Dispatch<React.SetStateAction<boolean>>}) {
     const [link, setLink] = useState("");
     const uploadWebsite = async () => { 
         const token = localStorage.getItem("token");
         if (link == "" || !token) return
-        const request = await fetch(`http://${import.meta.env.VITE_API_VM_IP}:3000/generateWebsiteSummary`, { 
+        await fetch(`http://${import.meta.env.VITE_API_VM_IP}:3000/generateWebsiteSummary`, { 
             method: "POST",
             body: JSON.stringify({link, token}),
             headers: { 'Content-Type': 'application/json'}
         })
-        console.log(request.status);
     }
+    const listener = (e: PointerEvent) => { 
+        const element = document.querySelector("#addWebsiteForm")
+        if (!element) return
+        if (element.contains(e.target as Node)) setAdd(false);
+    }
+    useEffect(() => { 
+
+        document.addEventListener("click", listener);
+        return () => document.removeEventListener("click", listener);
+    },[])
     return ( 
-        <div className="absolute flex justify-center items-center cursor-auto z-50 w-full h-full top-0 left-0 bg-transparent backdrop-blur-md">
+        <div id="addWebsiteForm" className="absolute flex justify-center items-center cursor-auto z-50 w-full h-full top-0 left-0 bg-transparent backdrop-blur-md">
             <div className="bg-gray-400 flex space-y-2 p-12 border-2 text-xl border-white rounded-xl flex-col text-white">
                 <h1>Enter the link to upload</h1>
                 <input className="outline-none border-b-black border-b-2" value={link} onChange={(e) => setLink(e.target.value)} type="text"/>
                 <button className="mt-4 cursor-pointer border-2 border-black bg-blue-500 p-4 rounded-xl" onClick={uploadWebsite}>Generate Entry</button>
+                <p>Or click outside to go back</p>
             </div>
         </div>
     )
@@ -105,8 +117,8 @@ function Search() {
 
     return ( 
         <div className="border-2 w-full h-full flex-col flex items-center relative border-white">
-            <div className="flex flex-col w-1/3 h-2/3 mt-10 border-2 border-red-300 ">
-                <input className="outline-white h-14 p-2 rounded-md text-4xl text-white border-2" onChange={(e) => setQuery(e.target.value)} value={query} placeholder="Search here"/>
+            <div className="flex flex-col w-1/3 h-2/3 mt-20">
+                <input className="outline-white h-24 p-2 rounded-md text-6xl text-white border-2" onChange={(e) => setQuery(e.target.value)} value={query} placeholder="Search here"/>
                 <div>
                     {searchResults.map(e => { 
                         return ( 

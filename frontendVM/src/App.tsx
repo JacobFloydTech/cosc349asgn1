@@ -1,23 +1,31 @@
 import {  StrictMode, useContext, useEffect, useState } from "react"
 import Homepage from "./Homepage";
-import { LoginContext } from "./context";
+import { LoginContext, PopupContext } from "./context";
+import type { Website } from "./vite-env";
 
 
 export default function BaseApplication() { 
   const [login, setLogin] = useState<string | null>(null);
+  const [website, setWebsite] = useState<Website | null>(null);
 
 
   return ( 
     <StrictMode>
       <LoginContext.Provider value={{login, setLogin}}>
-        <App/>
+        <PopupContext value={{website, setWebsite}}>
+          <App/>
+        </PopupContext>
       </LoginContext.Provider>
+      
 
     </StrictMode>
   )
 }
+
+
 function App() { 
   const {login, setLogin} = useContext(LoginContext);
+  const {website} = useContext(PopupContext);
   const getAuth = async (token: string) => { 
     const request = await fetch(`http://${import.meta.env.VITE_API_VM_IP}:3000/decodeJWT`, { 
       method: "POST", body: JSON.stringify({token}), headers: { 'Content-Type': 'application/json'}
@@ -42,6 +50,7 @@ function App() {
       <svg preserveAspectRatio="none" className="absolute w-full h-full top-0 left-0 -z-10" viewBox="0 0 200 200">
           <path fill="blue" d="M 200 0 l 0 200 l -200 0 "/>
       </svg>
+      {website && <Popup/>}
     </div>
   )
 }
@@ -88,6 +97,26 @@ const LoginForm = () => {
         `}>{signUp ? "Sign up" : "Login here"}</button>
       {!signUp && <button onClick={() => setSignUp(true)} className="text-sm mt-5 cursor-pointer">Don't have an account? Sign up here</button>}
       {signUp && <button onClick={() => setSignUp(false)} className="text-sm mt-5 cursor-pointer">Back to login</button>}
+    </div>
+  )
+}
+
+const Popup = () => { 
+  const {website, setWebsite} = useContext(PopupContext);
+  useEffect(() => { 
+    document.addEventListener("keydown", ({code}) => { 
+      if (code == "Escape") setWebsite(null)
+    })
+  },[])
+  return ( 
+    <div className="w-full h-full flex justify-center items-center top-0 left-0 absolute z-50 backdrop-blur-2xl">
+      <div id="popupContent" className="w-2/3 bg-gray-500 px-12 py-6 rounded-xl border-white border-2 ">
+        <div className="flex mx-auto justify-around w-1/4 items-center">
+          <img src={website?.favicon}/>
+          <h2>{website?.name}</h2>
+        </div>
+        <p>{website?.summary}</p>
+      </div>
     </div>
   )
 }
