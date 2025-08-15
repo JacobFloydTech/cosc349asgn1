@@ -1,2 +1,2 @@
-[dotenv@17.2.1] injecting env (0) from ../.env -- tip: 🔐 encrypt with Dotenvx: https://dotenvx.com
+[dotenv@17.2.1] injecting env (0) from ../.env -- tip: ⚙️  enable debug logging with { debug: true }
 Listening on port 3000

@@ -13,4 +13,5 @@ nvm use 20
 # Install frontend deps
 cd /vagrant/
 npm install
-npm run dev
+npm install
+nohup npm run dev > server.log 2>&1 & 
