@@ -95,10 +95,10 @@ app.post('/generateWebsiteSummary', async (req, res) => {
     try { 
         const browser = await puppeteer.launch({headless: 'new'})
         const page = await browser.newPage();
-        await page.goto(link);
+        await page.goto(link, {waitUntil: 'domcontentloaded'});
         const title = await page.title();
         const data = await page.evaluate(() => { 
-            return document.body.innerText;
+            return document.body.textContent;
         })
         const summary = await generateAISummary(data);
         const faviconLink = await page.evaluate(() => { 
@@ -122,7 +122,7 @@ const generateAISummary = async (text) => {
         "contents": [
             {
                 "parts": [
-                    {"text": `I need you to generate a summary of this website. Just give me the actual review to immediately put in my database and nothing else like greetings or conclusion. Here is the body.innerText: \n ${text}`}
+                    {"text": `I need you to generate a summary of this website about 300 words long. Just give me the actual review to immediately put in my database and nothing else like greetings or conclusion. Here is the textContent: \n ${text}`}
                 ]
             }
         ]

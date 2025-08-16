@@ -2,11 +2,12 @@ apt-get update -y
 apt-get install -y mysql-server
 sed -i "s/^bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mysql.conf.d/mysqld.cnf
 systemctl restart mysql
-mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'rootpassword'; FLUSH PRIVILEGES;"
-mysql -uroot -prootpassword -e "CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'rootpassword'; \
+mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH caching_sha2_password BY 'rootpassword'; FLUSH PRIVILEGES;"
+mysql -uroot -prootpassword -e "CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED WITH caching_sha2_password BY 'rootpassword'; \
                                 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' WITH GRANT OPTION; \
                                 FLUSH PRIVILEGES;
-                                CREATE DATABASE IF NOT EXISTS COSC349;
+                                DROP DATABASE IF EXISTS COSC349;
+                                CREATE DATABASE COSC349;
                                 USE COSC349;
                                 CREATE TABLE IF NOT EXISTS User (
                                   username VARCHAR(255) UNIQUE PRIMARY KEY,

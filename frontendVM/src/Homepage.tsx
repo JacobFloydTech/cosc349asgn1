@@ -50,7 +50,7 @@ function Sidebar() {
                     return ( 
                         <button onClick={() => setPopup(e)} className="px-4">
                             <p>{e.name}</p>
-                            <p className="text-sm text-gray-500">{e.link}</p>
+                            <a href={e.link} className="text-sm text-gray-500">{e.link}</a>
                         </button>
                     )
                 })}
@@ -58,40 +58,38 @@ function Sidebar() {
             </div>
             <div onClick={() => setAdd(true)} className="flex p-4  cursor-pointer justify-center">
                 <AddSVG/>
-                {add && <AddWebsite setAdd={setAdd}/>} 
+                {add && <AddWebsite />} 
             </div>
         </div>
     )
 }
 
-function AddWebsite({setAdd}: {setAdd: React.Dispatch<React.SetStateAction<boolean>>}) {
+function AddWebsite() {
     const [link, setLink] = useState("");
+    const [loading, setLoading] = useState(false);
     const uploadWebsite = async () => { 
         const token = localStorage.getItem("token");
-        if (link == "" || !token) return
-        await fetch(`http://${import.meta.env.VITE_API_VM_IP}:3000/generateWebsiteSummary`, { 
+        if (!link || !token) return
+        setLoading(true)
+        const response = await fetch(`http://${import.meta.env.VITE_API_VM_IP}:3000/generateWebsiteSummary`, { 
             method: "POST",
             body: JSON.stringify({link, token}),
             headers: { 'Content-Type': 'application/json'}
         })
+        if (response.ok) {
+            window.location.reload();
+        } else { 
+            setLoading(false);
+        }
     }
-    const listener = (e: PointerEvent) => { 
-        const element = document.querySelector("#addWebsiteForm")
-        if (!element) return
-        if (element.contains(e.target as Node)) setAdd(false);
-    }
-    useEffect(() => { 
 
-        document.addEventListener("click", listener);
-        return () => document.removeEventListener("click", listener);
-    },[])
     return ( 
         <div id="addWebsiteForm" className="absolute flex justify-center items-center cursor-auto z-50 w-full h-full top-0 left-0 bg-transparent backdrop-blur-md">
             <div className="bg-gray-400 flex space-y-2 p-12 border-2 text-xl border-white rounded-xl flex-col text-white">
                 <h1>Enter the link to upload</h1>
                 <input className="outline-none border-b-black border-b-2" value={link} onChange={(e) => setLink(e.target.value)} type="text"/>
-                <button className="mt-4 cursor-pointer border-2 border-black bg-blue-500 p-4 rounded-xl" onClick={uploadWebsite}>Generate Entry</button>
-                <p>Or click outside to go back</p>
+                <button className="mt-4 cursor-pointer border-2 border-black bg-blue-500 p-4 rounded-xl" onClick={uploadWebsite}>{loading ? <Loading/> : "Generate Entry"}</button>
+                <p>Or press escape to go back</p>
             </div>
         </div>
     )
@@ -154,5 +152,13 @@ function AddSVG() {
 function LogoutSVG () { 
     return ( 
         <svg fill="#000000" className="w-full h-full" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"  viewBox="0 -50 500 500" enable-background="new 0 0 500 500"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g  stroke="white" fill="white" id="SVGRepo_iconCarrier"> <g> <path  d="M250,224c-4.4,0-8,3.6-8,8v24c0,4.4-3.6,8-8,8h-40c-4.4,0-8-3.6-8-8V144c0-4.4,3.6-8,8-8h40c4.4,0,8,3.6,8,8v24 c0,4.4,3.6,8,8,8s8-3.6,8-8v-24c0-13.2-10.8-24-24-24h-40c-13.2,0-24,10.8-24,24v112c0,13.2,10.8,24,24,24h40c13.2,0,24-10.8,24-24 v-24C258,227.6,254.4,224,250,224z"></path> <path d="M328.4,204.8c0.1-0.1,0.2-0.2,0.3-0.3c0,0,0,0,0-0.1c0.1-0.2,0.2-0.4,0.3-0.6c0.1-0.3,0.3-0.5,0.4-0.8 c0.1-0.3,0.2-0.5,0.3-0.8c0.1-0.2,0.2-0.4,0.2-0.7c0.2-1,0.2-2.1,0-3.1c0,0,0,0,0,0c0-0.2-0.1-0.4-0.2-0.7 c-0.1-0.3-0.1-0.5-0.2-0.8c0,0,0,0,0,0c-0.1-0.3-0.3-0.5-0.4-0.8c-0.1-0.2-0.2-0.4-0.3-0.6c-0.3-0.4-0.6-0.9-1-1.2l-32-32 c-3.1-3.1-8.2-3.1-11.3,0c-3.1,3.1-3.1,8.2,0,11.3l18.3,18.3H210c-4.4,0-8,3.6-8,8s3.6,8,8,8h92.7l-18.3,18.3 c-3.1,3.1-3.1,8.2,0,11.3c1.6,1.6,3.6,2.3,5.7,2.3s4.1-0.8,5.7-2.3l32-32c0,0,0,0,0,0C327.9,205.4,328.1,205.1,328.4,204.8z"></path> </g> </g></svg>
+    )
+}
+
+function Loading() { 
+    return ( 
+        <div className="flex w-full h-auto justify-center items-center">
+            <svg id="loading" width={50} height={50} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="0"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M20.0001 12C20.0001 13.3811 19.6425 14.7386 18.9623 15.9405C18.282 17.1424 17.3022 18.1477 16.1182 18.8587C14.9341 19.5696 13.5862 19.9619 12.2056 19.9974C10.825 20.0328 9.45873 19.7103 8.23975 19.0612" stroke="#000000" stroke-width="3.55556" stroke-linecap="round"></path> </g></svg>
+        </div>
     )
 }

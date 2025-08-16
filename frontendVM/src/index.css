@@ -3,3 +3,11 @@
 html { 
   background-color: rgb(61, 61, 61);
 }
+
+#loading { 
+  animation: rotate 1s forwards infinite linear;
+}
+@keyframes rotate { 
+  from { rotate: 0deg;}
+  to { rotate: 360deg;}
+}
