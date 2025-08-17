@@ -13,7 +13,6 @@ export default function Homepage() {
 
 function Sidebar() { 
     const {login, setLogin} = useContext(LoginContext);
-    const { setWebsite: setPopup} = useContext(PopupContext);
     const [websites, setWebsites] = useState<Website[]>([]);
     const [add, setAdd] = useState<boolean>(false);
     const getWebsites = async () => { 
@@ -38,24 +37,23 @@ function Sidebar() {
         })  
     },[])
     return ( 
-        <div className="flex flex-col justify-between text-white ">
-            <div>
+        <div className="grid grid-rows-[10%_80%_10%] h-screen justify-between text-white ">
                 <div className="flex justify-around items-center">
                     <p className="text-xl">Logged in as: {login}</p>
                     <button onClick={logout} className="h-32 w-32 cursor-pointer">
                         <LogoutSVG/>
                     </button>
                 </div>
-                {websites.map(e => { 
-                    return ( 
-                        <button onClick={() => setPopup(e)} className="px-4">
-                            <p>{e.name}</p>
-                            <a href={e.link} className="text-sm text-gray-500">{e.link}</a>
-                        </button>
-                    )
-                })}
-
-            </div>
+                <div className="overflow-scroll overflow-x-clip ">
+                    <h1 className="text-2xl text-center font-bold">My websites</h1>
+                    {websites.map((website, index) => { 
+                        return ( 
+                            <div key={index}>
+                                <Link website={website}/>
+                            </div>
+                        )
+                    })}
+                </div>
             <div onClick={() => setAdd(true)} className="flex p-4  cursor-pointer justify-center">
                 <AddSVG/>
                 {add && <AddWebsite />} 
@@ -130,10 +128,12 @@ function Search() {
 }
 
 function Link({website}: { website: Website}) { 
+    const {setWebsite} = useContext(PopupContext);
     return ( 
-        <div>
-            {website.name}
-        </div>
+        <button onClick={() => setWebsite(website)} className="px-4 my-4">
+            <p className="text-xl text-white">{website.name}</p>
+            <a href={website.link} className="text-sm text-gray-500">{website.link}</a>
+        </button>
     )
 }
 
