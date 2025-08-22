@@ -122,7 +122,7 @@ const generateAISummary = async (text) => {
         "contents": [
             {
                 "parts": [
-                    {"text": `I need you to generate a summary of this website about 300 words long. Just give me the actual review to immediately put in my database and nothing else like greetings or conclusion. Here is the textContent: \n ${text}`}
+                    {"text": `You are given the document.body.textContent of a website. You are to generate just a paragraph summarizing what the website/product/company is about. Do not give any sort of intro or conclusion about the prompt, only the paragraph \n ${text}`}
                 ]
             }
         ]

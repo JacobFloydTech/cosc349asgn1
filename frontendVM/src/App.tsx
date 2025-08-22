@@ -110,12 +110,13 @@ const Popup = () => {
   },[])
   return ( 
     <div className="w-full h-full flex justify-center items-center top-0 left-0 absolute z-50 backdrop-blur-2xl">
-      <div id="popupContent" className="w-2/3 bg-gray-500 px-12 py-6 rounded-xl border-white border-2 ">
-        <div className="flex mx-auto justify-around w-1/4 items-center">
-          <img src={website?.favicon}/>
-          <h2>{website?.name}</h2>
+      <div id="popupContent" className="w-2/3 bg-gray-500 px-12 py-6 flex flex-col space-y-4 rounded-xl border-white border-2 ">
+        <div className="flex mx-auto justify-around text-center w-1/2 mb-4 items-center">
+          <img className="w-12 aspect-square" src={website?.favicon}/>
+          <h2 className="text-2xl font-bold">{website?.name}</h2>
         </div>
         <p>{website?.summary}</p>
+        <a className="mx-auto my-4 underline text-2xl text-center w-full !text-blue-400" href={website?.link}>{website?.link}</a>
       </div>
     </div>
   )

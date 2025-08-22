@@ -112,10 +112,10 @@ function Search() {
     }
 
     return ( 
-        <div className="border-2 w-full h-full flex-col flex items-center relative border-white">
+        <div className="w-full h-full flex-col flex items-center relative border-l-black border-l-2 ">
             <div className="flex flex-col w-1/3 h-2/3 mt-20">
                 <input className="outline-white h-24 p-2 rounded-md text-6xl text-white border-2" onChange={(e) => setQuery(e.target.value)} value={query} placeholder="Search here"/>
-                <div>
+                <div className="overflow-scroll backdrop-blur-sm bg-[rgba(100,100,100,0.1)]">
                     {searchResults.map(e => { 
                         return ( 
                             <Link website={e}/>
@@ -132,7 +132,7 @@ function Link({website}: { website: Website}) {
     return ( 
         <button onClick={() => setWebsite(website)} className="px-4 my-4">
             <p className="text-xl text-white">{website.name}</p>
-            <a href={website.link} className="text-sm text-gray-500">{website.link}</a>
+            <p className="text-sm text-gray-500">{website.link}</p>
         </button>
     )
 }
