@@ -61,9 +61,29 @@ app.post('/signUp', async (req, res) => {
 })
 
 app.post('/decodeJWT', async (req, res) => { 
-    const {token} = req.body;
-    const data = jwt.decode(token, JWT_SECRET);
-    return res.status(200).json({username: data.user.username})
+    try { 
+        const {token} = req.body;
+        const data = jwt.decode(token, JWT_SECRET);
+        return res.status(200).json({username: data.user.username})
+    }
+    catch (error) { 
+        return res.status(403).send()
+    }
+})
+
+app.post("/deleteWebsite", async (req, res) => { 
+    try { 
+        const {token, link} = req.body;
+        const data = jwt.decode(token, JWT_SECRET);
+        const username = data.user.username;
+        await connection.query(
+            'DELETE FROM Website where link = ? and uploader = ?',
+            [link, username]
+        )
+        return res.status(202).send()
+    } catch (error) {
+         return res.status(500).send()
+        }
 })
 
 app.get('/getUserWebsites', async (req, res) => { 
