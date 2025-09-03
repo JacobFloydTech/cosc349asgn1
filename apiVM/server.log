@@ -1,2 +1,20 @@
-[dotenv@17.2.1] injecting env (0) from ../.env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+[dotenv@17.2.1] injecting env (2) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
 Listening on port 3000
+{
+  candidates: [
+    {
+      content: [Object],
+      finishReason: 'STOP',
+      avgLogprobs: -0.7357257991642147
+    }
+  ],
+  usageMetadata: {
+    promptTokenCount: 57717,
+    candidatesTokenCount: 154,
+    totalTokenCount: 57871,
+    promptTokensDetails: [ [Object] ],
+    candidatesTokensDetails: [ [Object] ]
+  },
+  modelVersion: 'gemini-2.0-flash',
+  responseId: 'BAy4aKmmLv3Qz7IPh42L-Q4'
+}

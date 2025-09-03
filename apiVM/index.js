@@ -5,12 +5,12 @@ import dotenv from 'dotenv';
 import puppeteer from "puppeteer";
 import jwt from 'jsonwebtoken'
 
-dotenv.config({path: "../.env"})
+dotenv.config()
 const app = express()
 app.use(cors())
 app.use(express.json())
 const port = 3000
-const JWT_SECRET = process.env['JWT_SECRET'];
+const JWT_SECRET = process.env.JWT_SECRET;
 
 
 
@@ -113,7 +113,12 @@ app.post('/generateWebsiteSummary', async (req, res) => {
     const username = data.user.username;
     if (!link || !username) return res.status(403).send();
     try { 
-        const browser = await puppeteer.launch({headless: 'new'})
+        const browser = await puppeteer.launch({
+          headless: 'new',
+          executablePath: '/usr/bin/chromium-browser',
+          args: ['--no-sandbox', '--disable-setuid-sandbox']
+        });
+
         const page = await browser.newPage();
         await page.goto(link, {waitUntil: 'domcontentloaded'});
         const title = await page.title();
@@ -151,6 +156,7 @@ const generateAISummary = async (text) => {
         {method: "POST", body: JSON.stringify(data), headers: { 'Content-Type':'application/json', 'X-goog-api-key': process.env['GEMINI_KEY']}}
     )
     const response = await request.json();
+    console.log(response);
     return response.candidates[0].content.parts[0].text;
 }
 
