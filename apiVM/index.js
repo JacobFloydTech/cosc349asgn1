@@ -4,6 +4,7 @@ import mysql from "mysql2/promise"
 import dotenv from 'dotenv';
 import puppeteer from "puppeteer";
 import jwt from 'jsonwebtoken'
+import bcrypt from 'bcrypt'
 
 dotenv.config()
 const app = express()
@@ -30,12 +31,13 @@ app.get("/", (req,res) => {
 app.post('/signIn', async (req, res) => { 
     const {username, password} = req.body;
     if (!username || !password) return res.status(500).send()
-    const [results] = await connection.query('SELECT * FROM User where username = ? and password = ?', [username, password])
+    const [results] = await connection.query('SELECT * FROM User where username = ?', [username])
 
     if (results.length == 0) return res.status(404).send()
     const user = results[0]
-
-    if (user.password == password && user.username == username) { 
+    console.log(password, user.password);
+    const hashCompare = bcrypt.compareSync(password, user.password);
+    if (hashCompare && user.username == username) { 
         const token = jwt.sign({user}, JWT_SECRET, {expiresIn: '7d'})
         return res.status(202).json({token})
     } else { 
@@ -46,10 +48,11 @@ app.post('/signIn', async (req, res) => {
 app.post('/signUp', async (req, res) => { 
     const {username, password} = req.body;
     if (!username || !password) return res.status(500).send()
+    const hashedPassword = bcrypt.hashSync(password, 10);
     try { 
         await connection.query(
             'INSERT INTO User VALUES (?,?)',
-            [username, password]
+            [username, hashedPassword]
         )
         const user = {username, password}
         const token = jwt.sign({user}, JWT_SECRET, { expiresIn: '7d'})

@@ -60,6 +60,7 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [signUp, setSignUp] = useState(false);
+  const [error, setError] = useState(false);
   const {setLogin} = useContext(LoginContext);
   const loginRequest =  async () => { 
     if (!username || !password) return 
@@ -72,6 +73,11 @@ const LoginForm = () => {
       const {token} = await request.json();
       localStorage.setItem('token', token)
       setLogin(username)
+    } else { 
+      setError(true)
+      setTimeout(() => {
+        setError(false)
+      }, 2500);
     }
   }
   const signUpFunction =  async () => { 
@@ -84,11 +90,17 @@ const LoginForm = () => {
       const {token} = await request.json();
       localStorage.setItem('token', token);
       setLogin(username)
+    } else { 
+      setError(true)
+      setTimeout(() => {
+        setError(false)
+      }, 2500);
     }
   }
   return ( 
     <div className="border-white border-2 backdrop-blur-2xl flex flex-col items-center justify-center h-1/2 w-1/4 -translate-y-1/6  p-4 text-2xl rounded-xl">
       <h1 className="text-white">Welcome</h1>
+      {error && <h2 className="font-bold !text-red-500">Error: Invalid Credientials</h2>}
       <input placeholder="Username" className="outline-0 border-transparent p-2 rounded-xl border-2 focus:border-white" onChange={(e) => setUsername(e.target.value)} value={username}/>
       <input type='password' placeholder="Password" className="outline-0 border-transparent p-2 rounded-xl border-2 focus:border-white" onChange={(e) => setPassword(e.target.value)} value={password}/> 
       {signUp && <input type="password" placeholder="Confirm Password" className="outline-0 border-transparent p-2 rounded-xl border-2 focus:border-white" onChange={(e) => setConfirmPassword(e.target.value)} value={confirmPassword}/> }

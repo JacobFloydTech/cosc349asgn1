@@ -1,20 +1,82 @@
-[dotenv@17.2.1] injecting env (2) from .env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+[dotenv@17.2.1] injecting env (2) from .env -- tip: 📡 observe env with Radar: https://dotenvx.com/radar
 Listening on port 3000
+test $2b$10$Vd3VA8Ik2x4fnXSZ0zF5MO7/9JVZcC/w7y3fSEA7RTKqdsI3zJiFm
+password $2b$10$Vd3VA8Ik2x4fnXSZ0zF5MO7/9JVZcC/w7y3fSEA7RTKqdsI3zJiFm
+asdasdasd $2b$10$Vd3VA8Ik2x4fnXSZ0zF5MO7/9JVZcC/w7y3fSEA7RTKqdsI3zJiFm
+password $2b$10$Vd3VA8Ik2x4fnXSZ0zF5MO7/9JVZcC/w7y3fSEA7RTKqdsI3zJiFm
 {
   candidates: [
     {
       content: [Object],
       finishReason: 'STOP',
-      avgLogprobs: -0.7357257991642147
+      avgLogprobs: -0.6284828567504883
     }
   ],
   usageMetadata: {
-    promptTokenCount: 57717,
-    candidatesTokenCount: 154,
-    totalTokenCount: 57871,
+    promptTokenCount: 68613,
+    candidatesTokenCount: 100,
+    totalTokenCount: 68713,
     promptTokensDetails: [ [Object] ],
     candidatesTokensDetails: [ [Object] ]
   },
   modelVersion: 'gemini-2.0-flash',
-  responseId: 'BAy4aKmmLv3Qz7IPh42L-Q4'
+  responseId: 'aKy7aLmUA5ilqtsP_OuLgQU'
+}
+wdasdasdasd $2b$10$Vd3VA8Ik2x4fnXSZ0zF5MO7/9JVZcC/w7y3fSEA7RTKqdsI3zJiFm
+password $2b$10$Vd3VA8Ik2x4fnXSZ0zF5MO7/9JVZcC/w7y3fSEA7RTKqdsI3zJiFm
+{
+  candidates: [
+    {
+      content: [Object],
+      finishReason: 'STOP',
+      avgLogprobs: -0.6173004876999628
+    }
+  ],
+  usageMetadata: {
+    promptTokenCount: 53176,
+    candidatesTokenCount: 105,
+    totalTokenCount: 53281,
+    promptTokensDetails: [ [Object] ],
+    candidatesTokensDetails: [ [Object] ]
+  },
+  modelVersion: 'gemini-2.0-flash',
+  responseId: 'r6y7aNCUEJenqtsPqLOm6A0'
+}
+asdasdasd $2b$10$Vd3VA8Ik2x4fnXSZ0zF5MO7/9JVZcC/w7y3fSEA7RTKqdsI3zJiFm
+password $2b$10$Vd3VA8Ik2x4fnXSZ0zF5MO7/9JVZcC/w7y3fSEA7RTKqdsI3zJiFm
+{
+  candidates: [
+    {
+      content: [Object],
+      finishReason: 'STOP',
+      avgLogprobs: -0.41578027825606495
+    }
+  ],
+  usageMetadata: {
+    promptTokenCount: 4563,
+    candidatesTokenCount: 95,
+    totalTokenCount: 4658,
+    promptTokensDetails: [ [Object] ],
+    candidatesTokensDetails: [ [Object] ]
+  },
+  modelVersion: 'gemini-2.0-flash',
+  responseId: '96y7aLT0GYygz7IP4rK0-Ac'
+}
+{
+  candidates: [
+    {
+      content: [Object],
+      finishReason: 'STOP',
+      avgLogprobs: -0.3195577390266187
+    }
+  ],
+  usageMetadata: {
+    promptTokenCount: 24543,
+    candidatesTokenCount: 66,
+    totalTokenCount: 24609,
+    promptTokensDetails: [ [Object] ],
+    candidatesTokensDetails: [ [Object] ]
+  },
+  modelVersion: 'gemini-2.0-flash',
+  responseId: 'Hq27aJ-KH7Lhz7IP8vvqoQk'
 }
