@@ -1,5 +1,3 @@
-Project
-
 ## ⚙️ Structure:
 
 This project is built using 3 Vagrant virtual machines, managed by the root Vagrant file, and relies on the 3 shell scripts to properly configure them
@@ -15,3 +13,7 @@ Runs using Express, a popular light-weight and reliable JS framework for small, 
 ### 🗄️ Database :
 
 The final Vagrant machine runs a mySQL database, which contains two tables: User and Website, where there is a FK relationship of User being able to be tied to many Websites.
+
+### How to run:
+
+Aftering cloning the repo to your local machine, move to the root folder of the project (Where the Vagrant file is) and run the command 'vagrant up'. This command may take a while, as both the frontend and API vm require dependencies such as JS and other modules, and Chromium for puppeteer. This project requires both for the computer to be capable of virtualization, and have both VirtualBox & Vagrant installed.
