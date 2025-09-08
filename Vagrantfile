@@ -13,6 +13,11 @@ Vagrant.configure("2") do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
   config.vm.box = "bento/ubuntu-22.04"
+  config.vm.boot_timeout = 600 
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 2048
+    vb.cpus = 2
+  end
   
   config.vm.define "dbserver" do |dbserver|
     dbserver.vm.network "private_network", ip: "10.10.10.10"
