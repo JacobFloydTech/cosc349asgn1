@@ -17,11 +17,13 @@ function Sidebar() {
     const [add, setAdd] = useState<boolean>(false);
     const getWebsites = async () => { 
         if (!login) return
-        const request = await fetch(`http://${import.meta.env.VITE_API_VM_IP}:3000/getUserWebsites`, { 
-            headers: { username: login}
+        const request = await fetch(`https://74cbdd5ktsjdu5gabzfnnebwki0dturx.lambda-url.us-east-1.on.aws/`, {
+            method:"POST", 
+            body: JSON.stringify({ username: login}),
+            headers: {'Content-Type': "application/json"}
         })
-        const {results} = await request.json()
-        setWebsites(results)
+        const data = await request.text();
+        setWebsites(JSON.parse(data))
 
     }
     const logout = () => { 
@@ -105,10 +107,13 @@ function Search() {
         
     },[setQuery, query])
     const searchDatabase =async () => { 
-        const request = await fetch(`http://${import.meta.env.VITE_API_VM_IP}:3000/query`, { headers: { query}})
-        const {results} = await request.json();
-
-        setSearchResults(results)
+        const request = await fetch(`https://g3ofr5mkesyo5rllxik2bgxlmm0smnpw.lambda-url.us-east-1.on.aws/`, {
+            method: "POST", body: JSON.stringify({query}), headers: {'Content-Type': 'application/json'}
+        })
+        if (request.ok) { 
+            const {results} = await request.json();
+            setSearchResults(results)
+        }
     }
 
     return ( 

@@ -27,7 +27,7 @@ function App() {
   const {login, setLogin} = useContext(LoginContext);
   const {website} = useContext(PopupContext);
   const getAuth = async (token: string) => { 
-    const request = await fetch(`http://${import.meta.env.VITE_API_VM_IP}:3000/decodeJWT`, { 
+    const request = await fetch(`https://otqoazieqy6sitztpy3kwhka6a0djcul.lambda-url.us-east-1.on.aws/`, { 
       method: "POST", body: JSON.stringify({token}), headers: { 'Content-Type': 'application/json'}
     })
     const {username} = await request.json();
@@ -65,7 +65,7 @@ const LoginForm = () => {
   const loginRequest =  async () => { 
     if (!username || !password) return 
 
-    const request = await fetch(`http://${import.meta.env.VITE_API_VM_IP}:3000/signIn`, { 
+    const request = await fetch(`https://bdklwvjl7m3xmf6xkbvkjubhcu0buuxw.lambda-url.us-east-1.on.aws/`, { 
       method: "POST", headers: { "Content-Type": 'application/json'},
       body: JSON.stringify({username, password})
     })
@@ -82,11 +82,11 @@ const LoginForm = () => {
   }
   const signUpFunction =  async () => { 
     if (!username || !password || !confirmPassword) return
-    const request = await fetch(`http://${import.meta.env.VITE_API_VM_IP}:3000/signUp`, { 
+    const request = await fetch(`https://qbbdhzz5ftz3cjzu7axerhmssa0iivbt.lambda-url.us-east-1.on.aws/`, { 
       method: "POST", headers: { 'Content-Type': "application/json"},
       body: JSON.stringify({username, password})
     })
-    if (request.status == 202) { 
+    if (request.status == 201) { 
       const {token} = await request.json();
       localStorage.setItem('token', token);
       setLogin(username)
