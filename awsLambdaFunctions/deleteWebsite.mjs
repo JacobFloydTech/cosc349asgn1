@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import mysql from 'mysql2';
+import mysql from 'mysql2/promise';
 
 
 export const handler = async(event) => { 
@@ -12,7 +12,7 @@ export const handler = async(event) => {
   connection = await mysql.createConnection({
       host: "database-2.cxlcd5rpwuoe.us-east-1.rds.amazonaws.com",
       user: "admin",
-      password: process.env.SQL_PASSWORD,
+      password: process.env.databasepassword,
       database: "COSC349",
       port: 3306
   });
