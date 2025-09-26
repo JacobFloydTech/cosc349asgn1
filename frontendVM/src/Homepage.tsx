@@ -137,7 +137,7 @@ function Link({ website }: { website: Website }) {
     const removeWebsite = async () => { 
         const token = localStorage.getItem("token")
         if (!token) return
-        const request = await fetch(`http://${import.meta.env.VITE_API_VM_IP}:3000/deleteWebsite`, { 
+        const request = await fetch(`https://zylbosy7cx45zfh4j6jfuupmi40sslgm.lambda-url.us-east-1.on.aws/`, { 
             method: "POST",
             body: JSON.stringify({token, link: website.link}),
             headers: { 'Content-Type': 'application/json'}
