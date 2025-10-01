@@ -18,10 +18,10 @@ export const handler = async(event) => {
   const {query} = JSON.parse(event.body)
   if (!query) return {statusCode:404, headers, body: JSON.stringify({message: "Missing query in body"})};
   const connection = await mysql.createConnection({
-      host: "database-2.cxlcd5rpwuoe.us-east-1.rds.amazonaws.com",
+      host: "database-4.cxlcd5rpwuoe.us-east-1.rds.amazonaws.com",
       user: "admin",
-      password: process.env.databasepassword,
-      database: "COSC349",
+      password: "password",
+      database: "cosc349",
       port: 3306
   });
   try { 

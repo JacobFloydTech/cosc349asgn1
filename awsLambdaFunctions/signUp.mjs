@@ -4,12 +4,12 @@ import jwt from 'jsonwebtoken';
 
 export const handler = async (event) => {
   const headers = {
-    "Access-Control-Allow-Origin": "*", // or "http://localhost:5173"
+    "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
   };
 
-  // Handle preflight
+
   if (event.requestContext.http.method === "OPTIONS") {
     return {
       statusCode: 200,
@@ -38,10 +38,10 @@ export const handler = async (event) => {
     }
 
     connection = await mysql.createConnection({
-      host: "database-2.cxlcd5rpwuoe.us-east-1.rds.amazonaws.com",
+      host: "database-4.cxlcd5rpwuoe.us-east-1.rds.amazonaws.com",
       user: "admin",
-      password: "karate2016Pasadena",
-      database: "COSC349",
+      password: "password",
+      database: "cosc349",
       port: 3306,
     });
 

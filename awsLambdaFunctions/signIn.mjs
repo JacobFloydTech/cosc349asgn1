@@ -9,7 +9,7 @@ export const handler = async (event) => {
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
   };
 
- 
+
   if (event.requestContext.http.method === "OPTIONS") {
     return {
       statusCode: 200,
@@ -31,10 +31,10 @@ export const handler = async (event) => {
     }
 
     connection = await mysql.createConnection({
-      host: "database-2.cxlcd5rpwuoe.us-east-1.rds.amazonaws.com",
+      host: "database-4.cxlcd5rpwuoe.us-east-1.rds.amazonaws.com",
       user: "admin",
-      password: process.env.databasepassword,
-      database: "COSC349",
+      password: "password",
+      database: "cosc349",
       port: 3306,
     });
 
