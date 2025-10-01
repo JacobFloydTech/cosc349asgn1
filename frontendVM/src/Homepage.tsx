@@ -71,7 +71,7 @@ function AddWebsite() {
         const token = localStorage.getItem("token");
         if (!link || !token) return
         setLoading(true)
-        const response = await fetch(`http://127.0.0.1:3000/generateWebsiteSummary`, { 
+        const response = await fetch(`https://vs67xeiuzkftzwgpavwgu4rumq0ndbzn.lambda-url.us-east-1.on.aws/`, { 
             method: "POST",
             body: JSON.stringify({link, token}),
             headers: { 'Content-Type': 'application/json'}

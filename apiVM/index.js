@@ -16,134 +16,48 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 
 const connection = await mysql.createConnection({
-    host: "10.10.10.10",
-    database: "COSC349",
-    user: "root",
-    password: "rootpassword",
+    host: "database-4.cxlcd5rpwuoe.us-east-1.rds.amazonaws.com",
+    database: "cosc349",
+    user: "admin",
+    password: "password",
     port: 3306 
 })
 
-
-app.get("/", (req,res) => {
-    return res.send("Hello world")
+app.use((req, res, next) => {
+  console.log('Time:', Date.now())
+  next()
 })
 
-app.post('/signIn', async (req, res) => { 
-    const {username, password} = req.body;
-    if (!username || !password) return res.status(500).send()
-    const [results] = await connection.query('SELECT * FROM User where username = ?', [username])
 
-    if (results.length == 0) return res.status(404).send()
-    const user = results[0]
-    console.log(password, user.password);
-    const hashCompare = bcrypt.compareSync(password, user.password);
-    if (hashCompare && user.username == username) { 
-        const token = jwt.sign({user}, JWT_SECRET, {expiresIn: '7d'})
-        return res.status(202).json({token})
-    } else { 
-        return res.status(401).send()
-    }
-})
 
-app.post('/signUp', async (req, res) => { 
-    const {username, password} = req.body;
-    if (!username || !password) return res.status(500).send()
-    const hashedPassword = bcrypt.hashSync(password, 10);
-    try { 
-        await connection.query(
-            'INSERT INTO User VALUES (?,?)',
-            [username, hashedPassword]
-        )
-        const user = {username, password}
-        const token = jwt.sign({user}, JWT_SECRET, { expiresIn: '7d'})
-        return res.status(202).json({token})
-    } catch (e) { 
-        console.error(e)
-        return res.status(500).send(JSON.stringify(e));
-    }
-})
-
-app.post('/decodeJWT', async (req, res) => { 
-    try { 
-        const {token} = req.body;
-        const data = jwt.decode(token, JWT_SECRET);
-        return res.status(200).json({username: data.user.username})
-    }
-    catch (error) { 
-        return res.status(403).send()
-    }
-})
-
-app.post("/deleteWebsite", async (req, res) => { 
-    try { 
-        const {token, link} = req.body;
-        const data = jwt.decode(token, JWT_SECRET);
-        const username = data.user.username;
-        await connection.query(
-            'DELETE FROM Website where link = ? and uploader = ?',
-            [link, username]
-        )
-        return res.status(202).send()
-    } catch (error) {
-         return res.status(500).send()
-        }
-})
-
-app.get('/getUserWebsites', async (req, res) => { 
-    const username = req.get("username");
-    if (!username) return res.status(401).send()
-    const [results] = await connection.query(
-        'SELECT * from Website where uploader = ?',
-        [username]
-    )
-    return res.status(200).json({results})
-})
-
-app.get('/query', async (req, res) => { 
-    const query = req.get("query");
-    if (!query) return res.json({results: []});
-    const [results] = await connection.query(
-        "SELECT * from Website where link LIKE CONCAT('%', ?, '%')  or summary LIKE CONCAT('%', ?, '%')  or name LIKE CONCAT('%', ?, '%')  or uploader LIKE CONCAT('%', ?, '%') ",
-        [query, query, query, query, query]
-    )
-    return res.json({results})
-})
 
 
 app.post('/generateWebsiteSummary', async (req, res) => { 
     const {link, token} = req.body;
-    const data = jwt.decode(token, JWT_SECRET);
-    const username = data.user.username;
+    const userdata = jwt.decode(token, JWT_SECRET);
+    const username = userdata.user.username;
     if (!link || !username) return res.status(403).send();
-    try { 
-        const browser = await puppeteer.launch({
-          headless: 'new',
-          executablePath: '/usr/bin/chromium-browser',
-          args: ['--no-sandbox', '--disable-setuid-sandbox']
-        });
-
-        const page = await browser.newPage();
-        await page.goto(link, {waitUntil: 'domcontentloaded'});
-        const title = await page.title();
-        const data = await page.evaluate(() => { 
-            return document.body.textContent;
-        })
-        const summary = await generateAISummary(data);
-        const faviconLink = await page.evaluate(() => { 
-            const iconLink = document.querySelector("link[rel~='icon']");
-            const link = iconLink ? iconLink.href : '/favicon.ico'; 
-            return String(link);
-        })
-        await connection.query(
-            'INSERT INTO Website (link, name, summary, uploader, favicon) VALUES (?,?,?,?,?)',
-            [link, title, summary, username, faviconLink]
-        )
-        return res.status(202).send()
-    } catch (e) { 
-        console.log(e);
-        return res.status(500).send()
-    }
+    const request = await fetch(link);
+    const html = await request.text();
+    const titleMatch = html.match(/<title>([^<]*)<\/title>/i);
+    const title = titleMatch ? titleMatch[1] : link
+    const faviconMatch = html.match(/<link[^>]*(rel=["'](?:shortcut )?icon["'])[^>]*href=["']([^"']+)["']/i);
+    const faviconLink = faviconMatch ? faviconMatch[2] : '/favicon.ico';
+    const bodyText = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
+                         .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, '')
+                         .replace(/<[^>]+>/g, ' ')
+                         .replace(/\s+/g, ' ')
+                         .trim();
+    const summary = await generateAISummary(bodyText);
+    console.log(summary);
+    await connection.query(
+        'INSERT INTO Website (link, name, summary, uploader, favicon) VALUES (?,?,?,?,?)',
+        [link, title, summary, username, faviconLink]
+    )
+    return res.status(202).send()
 })
+
+
 
 const generateAISummary = async (text) => {
     const data = { 
@@ -159,10 +73,10 @@ const generateAISummary = async (text) => {
         {method: "POST", body: JSON.stringify(data), headers: { 'Content-Type':'application/json', 'X-goog-api-key': process.env['GEMINI_KEY']}}
     )
     const response = await request.json();
-    console.log(response);
+
     return response.candidates[0].content.parts[0].text;
 }
 
 
 
-app.listen(port, () => console.log(`Listening on port ${port}`))
+app.listen(port, "0.0.0.0", () => console.log(`Listening on port ${port}`))
