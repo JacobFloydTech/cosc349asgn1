@@ -23,3 +23,5 @@ Aftering cloning the repo to your local machine, move to the root folder of the 
 # Assignment 2
 
 Here, two of the VM's become obselete, as they have been recreated in the cloud. The databaseVM has been converted to AWS RDS and MySQL, and all of the endpoints of the API have been split out into seperate Lambda functions, where the each of the files in the folder awsLambdaFunctions represents the index.mjs file of each function. Note in the report I go into a lot more detail about how to set up these.
+
+# Note: Ignore the .env variables, they are not a security risk and merely used for testing/sandbox purposes
